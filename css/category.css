@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+}
+
+.sort-options {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sort-options a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.sort-options a.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+.post-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px 8px 0 0;
+}
+
+.post-card h3 {
+    margin: 10px 0 5px;
+}
+
+.post-card p {
+    margin: 0 0 10px;
+    color: gray;
+}
+
+.post-card a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.post-card a:hover {
+    text-decoration: underline;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    color: #007bff;
+    border-radius: 5px;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+    color: white;
+}
