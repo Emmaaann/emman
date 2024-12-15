@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'BlogDB';
+$dbname = 'blogdb';
 $username = 'root';
 $password = '';
 if(isset($_SESSION[''])) {
