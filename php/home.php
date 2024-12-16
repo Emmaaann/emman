@@ -52,7 +52,7 @@ $trending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="/bscs4a/css/home.css">
+    <link rel="stylesheet" href="/bscs4a/css/home.css?v=<?php echo time(); ?>">
 </head>
 <body>
     <header>
@@ -68,6 +68,7 @@ $trending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php else: ?>
                 <a href="login.php">Login</a>
                 <a href="register.php">Register</a>
+                <a href="admin_dashboard.php">Admin Dashboard</a>
             <?php endif; ?>
         </nav>
     </header>
@@ -109,5 +110,8 @@ $trending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </section>
     </main>
+    <footer>
+        <p>&copy; 2023 Blog. All rights reserved.</p>
+    </footer>
 </body>
 </html>

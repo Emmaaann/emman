@@ -62,7 +62,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= ucfirst(htmlspecialchars($category)) ?> Posts</title>
-    <link rel="stylesheet" href="/bscs4a/css/category.css">
+    <link rel="stylesheet" href="/bscs4a/css/category.css?v=<?php echo time(); ?>">
 </head>
 <body>
     <header>
