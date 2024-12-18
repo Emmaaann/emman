@@ -12,13 +12,20 @@ header {
     text-align: center;
 }
 
+header nav {
+    margin-top: 10px;
+}
+
 header nav a {
     color: #fff;
     margin: 0 10px;
     text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
 }
 
 header nav a:hover {
+    color: #007bff;
     text-decoration: underline;
 }
 
@@ -33,6 +40,10 @@ main {
 
 h2 {
     margin-top: 0;
+    font-size: 24px;
+    color: #212529;
+    border-bottom: 2px solid #343a40;
+    padding-bottom: 10px;
 }
 
 form {
@@ -43,6 +54,7 @@ form {
 form label {
     margin-top: 10px;
     font-weight: bold;
+    color: #343a40;
 }
 
 form input, form textarea, form select, form button {
@@ -50,6 +62,14 @@ form input, form textarea, form select, form button {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+}
+
+form input:focus, form textarea:focus, form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 form button {
@@ -58,6 +78,8 @@ form button {
     border: none;
     margin-top: 15px;
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
 form button:hover {
@@ -67,33 +89,119 @@ form button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-table th, table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+table thead th {
+    padding: 10px;
     text-align: left;
 }
 
-table th {
-    background-color: #f4f4f4;
+table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+table tbody td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: middle;
+}
+
+table tbody tr:hover {
+    background-color: #f8f9fa;
 }
 
 .delete-btn {
-    color: red;
+    color: #dc3545;
     text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border: 1px solid #dc3545;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .delete-btn:hover {
-    text-decoration: underline;
+    background-color: #dc3545;
+    color: #fff;
 }
 
 .success {
     color: green;
+    font-weight: bold;
 }
 
 .error {
     color: red;
+    font-weight: bold;
 }
 
+.comments-list, .likes-list {
+    margin-bottom: 30px;
+}
+
+.comments-list h2, .likes-list h2 {
+    margin-bottom: 15px;
+    color: #343a40;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown button {
+    background: none;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.dropdown button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0; /* Align dropdown content with the button */
+    background-color: #4f545b;
+    color: whitesmoke;
+    min-width: 150px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    overflow: hidden;
+    padding: 0;
+}
+
+.dropdown-content a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content a:hover {
+    background-color: #3b4045;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

@@ -55,24 +55,25 @@ $trending_posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="/bscs4a/css/home.css?v=<?php echo time(); ?>">
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Blog</h1>
-        <nav>
-            <?php if (!empty($user_display_name)): ?>
-                <div class="dropdown">
-                    <button><?= htmlspecialchars($user_display_name) ?></button>
-                    <div class="dropdown-content">
-                        <a href="logout.php">Logout</a>
-                    </div>
+<header>
+    <h1></h1>
+    <nav>
+        <?php if (!empty($user_display_name)): ?>
+            <div class="dropdown">
+                <button><?= htmlspecialchars($user_display_name) ?></button>
+                <div class="dropdown-content">
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                        <a href="admin_dashboard.php">Admin Dashboard</a>
+                    <?php endif; ?>
+                    <a href="logout.php">Logout</a>
                 </div>
-            <?php else: ?>
-                <a href="login.php">Login</a>
-                <a href="register.php">Register</a>
-                <a href="admin_dashboard.php">Admin Dashboard</a>
-            <?php endif; ?>
-        </nav>
-    </header>
-
+            </div>
+        <?php else: ?>
+            <a href="login.php">Login</a>
+            <a href="register.php">Register</a>
+        <?php endif; ?>
+    </nav>
+</header>
     <main>
         <section class="latest-posts">
             <h2>Latest Posts</h2>

@@ -11,6 +11,8 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
+session_start();
+
 // Check if user is an admin
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
@@ -22,21 +24,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_post'])) {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
     $category = trim($_POST['category']);
-    $image_path = '';
+    $image_paths = [];
 
-    // Handle image upload
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    // Handle multiple image uploads
+    if (isset($_FILES['images']) && count($_FILES['images']['name']) > 0) {
         $target_dir = "uploads/";
-        $target_file = $target_dir . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
-        $image_path = $target_file;
+        foreach ($_FILES['images']['name'] as $key => $image_name) {
+            $target_file = $target_dir . basename($image_name);
+            if (move_uploaded_file($_FILES['images']['tmp_name'][$key], $target_file)) {
+                $image_paths[] = $target_file;
+            }
+        }
     }
 
     // Insert post into the database
-    $stmt = $conn->prepare("INSERT INTO Posts (title, content, category, image_path, created_at) VALUES (?, ?, ?, ?, NOW())");
-    $stmt->bind_param('ssss', $title, $content, $category, $image_path);
+    $stmt = $pdo->prepare("INSERT INTO Posts (title, content, category, image_path, created_at) VALUES (?, ?, ?, ?, NOW())");
+    if ($stmt->execute([$title, $content, $category, implode(',', $image_paths)])) {
+        $post_id = $pdo->lastInsertId();
 
-    if ($stmt->execute()) {
+        // Insert images into the database
+        foreach ($image_paths as $image_path) {
+            $pdo->prepare("INSERT INTO PostImages (post_id, image_path) VALUES (?, ?)")
+                ->execute([$post_id, $image_path]);
+        }
         $success = "Post created successfully!";
     } else {
         $error = "Failed to create post.";
@@ -44,19 +54,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_post'])) {
 }
 
 // Fetch all posts
-$result = $conn->query("SELECT id, title, category, created_at FROM Posts ORDER BY created_at DESC");
-$posts = $result->fetch_all(MYSQLI_ASSOC);
+try {
+    $stmt = $pdo->query("SELECT id, title, category, created_at FROM Posts ORDER BY created_at DESC");
+    $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Failed to fetch posts: " . $e->getMessage());
+}
+
+// Fetch comments and likes
+$comments = $pdo->query("SELECT id, post_id, content, created_at FROM Comments ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+$likes = $pdo->query("SELECT id, post_id, user_id, created_at FROM Likes ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle post deletion
-if (isset($_GET['delete_id'])) {
-    $delete_id = intval($_GET['delete_id']);
-    $stmt = $conn->prepare("DELETE FROM Posts WHERE id = ?");
-    $stmt->bind_param('i', $delete_id);
+if (isset($_GET['delete_post_id'])) {
+    $delete_id = intval($_GET['delete_post_id']);
+    $pdo->prepare("DELETE FROM Posts WHERE id = ?")->execute([$delete_id]);
+    $pdo->prepare("DELETE FROM PostImages WHERE post_id = ?")->execute([$delete_id]);
+    $pdo->prepare("DELETE FROM Comments WHERE post_id = ?")->execute([$delete_id]);
+    $pdo->prepare("DELETE FROM Likes WHERE post_id = ?")->execute([$delete_id]);
 
-    if ($stmt->execute()) {
-        header("Location: admin_dashboard.php");
-        exit;
-    }
+    header("Location: admin_dashboard.php");
+    exit;
+}
+
+// Handle comment deletion
+if (isset($_GET['delete_comment_id'])) {
+    $comment_id = intval($_GET['delete_comment_id']);
+    $pdo->prepare("DELETE FROM Comments WHERE id = ?")->execute([$comment_id]);
+    header("Location: admin_dashboard.php");
+    exit;
+}
+
+// Handle like deletion
+if (isset($_GET['delete_like_id'])) {
+    $like_id = intval($_GET['delete_like_id']);
+    $pdo->prepare("DELETE FROM Likes WHERE id = ?")->execute([$like_id]);
+    header("Location: admin_dashboard.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -67,6 +101,7 @@ if (isset($_GET['delete_id'])) {
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/bscs4a/css/admin_dashboard.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <header>
         <h1>Admin Dashboard</h1>
@@ -75,8 +110,8 @@ if (isset($_GET['delete_id'])) {
             <a href="logout.php">Logout</a>
         </nav>
     </header>
-
     <main>
+        <!-- Post Creation Section -->
         <section class="post-creation">
             <h2>Create a New Post</h2>
             <?php if (!empty($success)) echo "<p class='success'>$success</p>"; ?>
@@ -94,13 +129,14 @@ if (isset($_GET['delete_id'])) {
                     <option value="troubleshooting">Troubleshooting</option>
                 </select>
 
-                <label for="image">Image:</label>
-                <input type="file" id="image" name="image" accept="image/*">
+                <label for="images">Images:</label>
+                <input type="file" id="images" name="images[]" accept="image/*" multiple>
 
                 <button type="submit" name="create_post">Create Post</button>
             </form>
         </section>
 
+        <!-- Manage Posts Section -->
         <section class="post-list">
             <h2>Manage Posts</h2>
             <table>
@@ -122,7 +158,7 @@ if (isset($_GET['delete_id'])) {
                                 <td><?= htmlspecialchars($post['category']) ?></td>
                                 <td><?= htmlspecialchars($post['created_at']) ?></td>
                                 <td>
-                                    <a href="admin_dashboard.php?delete_id=<?= $post['id'] ?>" class="delete-btn">Delete</a>
+                                    <a href="admin_dashboard.php?delete_post_id=<?= $post['id'] ?>" class="delete-btn">Delete Post</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -134,7 +170,64 @@ if (isset($_GET['delete_id'])) {
                 </tbody>
             </table>
         </section>
+
+        <!-- Manage Comments Section -->
+        <section class="comments-list">
+            <h2>Manage Comments</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Post ID</th>
+                        <th>Content</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($comments as $comment): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($comment['id']) ?></td>
+                            <td><?= htmlspecialchars($comment['post_id']) ?></td>
+                            <td><?= htmlspecialchars($comment['content']) ?></td>
+                            <td><?= htmlspecialchars($comment['created_at']) ?></td>
+                            <td>
+                                <a href="admin_dashboard.php?delete_comment_id=<?= $comment['id'] ?>" class="delete-btn">Delete</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Manage Likes Section -->
+        <section class="likes-list">
+            <h2>Manage Likes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Post ID</th>
+                        <th>User ID</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($likes as $like): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($like['id']) ?></td>
+                            <td><?= htmlspecialchars($like['post_id']) ?></td>
+                            <td><?= htmlspecialchars($like['user_id']) ?></td>
+                            <td><?= htmlspecialchars($like['created_at']) ?></td>
+                            <td>
+                                <a href="admin_dashboard.php?delete_like_id=<?= $like['id'] ?>" class="delete-btn">Delete</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </section>
     </main>
 </body>
 </html>
-
