@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-$host = 'localhost';
-$dbname = 'blogdb';
-$username = 'root';
-$password = '';
+$host = 'sql203.infinityfree.com';
+$dbname = 'if0_37727017_blogdb';
+$username = 'if0_37727017';
+$password = '8KmXpV9wEy6';
 
-// Database connection setup
+// Establish database connection
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
@@ -28,7 +28,7 @@ if (empty($comment)) {
 }
 
 // Check if the user has already commented
-$stmt = $pdo->prepare("SELECT id FROM Comments WHERE user_id = :user_id AND post_id = :post_id");
+$stmt = $pdo->prepare("SELECT id FROM comments WHERE user_id = :user_id AND post_id = :post_id");
 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
 $stmt->execute();
@@ -38,7 +38,7 @@ if ($stmt->fetch()) {
 }
 
 // Insert the comment
-$stmt = $pdo->prepare("INSERT INTO Comments (user_id, post_id, content, created_at) VALUES (:user_id, :post_id, :content, NOW())");
+$stmt = $pdo->prepare("INSERT INTO comments (user_id, post_id, content, created_at) VALUES (:user_id, :post_id, :content, NOW())");
 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
 $stmt->bindParam(':content', $comment, PDO::PARAM_STR);

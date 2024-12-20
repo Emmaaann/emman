@@ -1,11 +1,12 @@
 <?php
-$host = 'localhost';
-$dbname = 'blogdb';
-$username = 'root';
-$password = '';
+$host = 'sql203.infinityfree.com';
+$dbname = 'if0_37727017_blogdb';
+$username = 'if0_37727017';
+$password = '8KmXpV9wEy6';
 
+// Establish database connection
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             // Check username and hashed password
-            $stmt = $pdo->prepare("SELECT id, password, role FROM Users WHERE username = :username");
+            $stmt = $pdo->prepare("SELECT id, password, role FROM users WHERE username = :username");
             $stmt->bindParam(':username', $username, PDO::PARAM_STR);
             $stmt->execute();
 
@@ -55,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($user['role'] === 'admin') {
                         header("Location: admin_dashboard.php");
                     } else {
-                        header("Location: home.php");
+                        header("Location: index.php");
                     }
                     exit;
                 } else {
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/bscs4a/css/login.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="/jegrandia/login.css?v=<?php echo time(); ?>">
     <title>Login</title>
 </head>
 <body>
@@ -88,10 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-            
-            <label>
-                <input type="checkbox" name="remember_me"> Remember me
-            </label>
             
             <button type="submit">Login</button>
         </form>

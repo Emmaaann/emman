@@ -26,7 +26,6 @@ header nav a {
 
 header nav a:hover {
     color: #007bff;
-    text-decoration: underline;
 }
 
 main {
@@ -147,6 +146,15 @@ table tbody tr:hover {
     font-weight: bold;
 }
 
+.post-list {
+    margin-bottom: 30px;
+}
+
+.post-list h2 {
+    margin-bottom: 15px;
+    color: #343a40;
+}
+
 .comments-list, .likes-list {
     margin-bottom: 30px;
 }
@@ -179,7 +187,7 @@ table tbody tr:hover {
 .dropdown-content {
     display: none;
     position: absolute;
-    right: 0; /* Align dropdown content with the button */
+    right: 0; 
     background-color: #4f545b;
     color: whitesmoke;
     min-width: 150px;

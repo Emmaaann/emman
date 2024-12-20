@@ -1,11 +1,12 @@
 <?php
-$host = 'localhost';
-$dbname = 'blogdb';
-$username = 'root';
-$password = '';
-session_start();
+$host = 'sql203.infinityfree.com';
+$dbname = 'if0_37727017_blogdb';
+$username = 'if0_37727017';
+$password = '8KmXpV9wEy6';
+
+// Establish database connection
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());

@@ -1,11 +1,12 @@
 <?php
-$host = 'localhost';
-$dbname = 'blogdb';
-$username = 'root';
-$password = '';
+$host = 'sql203.infinityfree.com';
+$dbname = 'if0_37727017_blogdb';
+$username = 'if0_37727017';
+$password = '8KmXpV9wEy6';
 
+// Establish database connection
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="/bscs4a/css/register.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="/jegrandia/register.css?v=<?php echo time(); ?>">
 </head>
 <body>
     <div class="container">
